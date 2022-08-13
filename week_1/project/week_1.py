@@ -40,7 +40,7 @@ class Aggregation(BaseModel):
     tags={"kind": "s3"},
     description="Get a list of stocks from an S3 file",
 )
-def get_s3_data(context):
+def get_s3_data(context) -> List[Stock]:
     output = list()
     with open(context.op_config["s3_key"]) as csvfile:
         reader = csv.reader(csvfile)
@@ -50,9 +50,30 @@ def get_s3_data(context):
     return output
 
 
-@op
-def process_data():
-    pass
+@op(
+    ins={"stocks": In(dagster_type=List[Stock])},
+    out={"agg": Out(dagster_type=Aggregation)},
+    description="Get the stock with the greatest high value",
+)
+def process_data(stocks: List[Stock]) -> Aggregation:
+    greatest_high_stock = Stock(
+        date=datetime.strptime("2018/10/15", "%Y/%m/%d"),
+        close=0.0,
+        volume=0,
+        open=0.0,
+        high=0.0,
+        low=0.0,
+    )
+    for each in stocks:
+        if each.high > greatest_high_stock.high:
+            greatest_high_stock = each
+
+    agg = Aggregation(
+        date=greatest_high_stock.date,
+        high=greatest_high_stock.high,
+    )
+
+    return agg
 
 
 @op
