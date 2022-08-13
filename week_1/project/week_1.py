@@ -67,7 +67,7 @@ def find_greatest_high_value(stocks: List[Stock], n: int) -> Stock:
 @op(
     ins={"stocks": In(dagster_type=List[Stock])},
     out={"agg": Out(dagster_type=Aggregation)},
-    description="Given a list of stocks, return the aggregation with the greatest high value",
+    description="Given a list of stocks, return the aggregation with the greatest high value",  # noqa: E501
 )
 def process_data(stocks: List[Stock]) -> Aggregation:
     greatest_high_stock = find_greatest_high_value(stocks, len(stocks))
