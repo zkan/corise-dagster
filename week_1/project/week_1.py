@@ -80,10 +80,12 @@ def process_data(stocks: List[Stock]) -> Aggregation:
     ins={"aggregation": In(dagster_type=Aggregation)},
     description="Get an aggregation and write it to Redis",
 )
-def put_redis_data(aggregation: Aggregation) -> None:
+def put_redis_data(aggregation: Aggregation) -> Nothing:
     pass
 
 
 @job
 def week_1_pipeline():
-    pass
+    stocks = get_s3_data()
+    aggregation = process_data(stocks)
+    put_redis_data(aggregation)
