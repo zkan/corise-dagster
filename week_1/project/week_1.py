@@ -53,7 +53,7 @@ def get_s3_data(context) -> List[Stock]:
 @op(
     ins={"stocks": In(dagster_type=List[Stock])},
     out={"agg": Out(dagster_type=Aggregation)},
-    description="Get the stock with the greatest high value",
+    description="Given a list of stocks, return the aggregation with the greatest high value",
 )
 def process_data(stocks: List[Stock]) -> Aggregation:
     greatest_high_stock = Stock(
@@ -78,7 +78,7 @@ def process_data(stocks: List[Stock]) -> Aggregation:
 
 @op(
     ins={"aggregation": In(dagster_type=Aggregation)},
-    description="Get an aggregation and write it to Redis",
+    description="Upload an aggregation to Redis",
 )
 def put_redis_data(aggregation: Aggregation) -> Nothing:
     pass
