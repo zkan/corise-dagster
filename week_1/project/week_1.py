@@ -76,8 +76,11 @@ def process_data(stocks: List[Stock]) -> Aggregation:
     return agg
 
 
-@op
-def put_redis_data():
+@op(
+    ins={"aggregation": In(dagster_type=Aggregation)},
+    description="Get an aggregation and write it to Redis",
+)
+def put_redis_data(aggregation: Aggregation) -> None:
     pass
 
 
