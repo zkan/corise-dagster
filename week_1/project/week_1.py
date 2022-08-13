@@ -55,7 +55,7 @@ def get_s3_data(context) -> List[Stock]:
     out={"agg": Out(dagster_type=Aggregation)},
     description="Given a list of stocks, return the aggregation with the greatest high value",
 )
-def process_data(context, stocks: List[Stock]) -> Aggregation:
+def process_data(stocks: List[Stock]) -> Aggregation:
     greatest_high_stock = Stock(
         date=datetime.strptime("2018/10/15", "%Y/%m/%d"),
         close=0.0,
@@ -72,7 +72,6 @@ def process_data(context, stocks: List[Stock]) -> Aggregation:
         date=greatest_high_stock.date,
         high=greatest_high_stock.high,
     )
-    context.log.debug(f"Aggregation with the greatest high value: {agg}")
 
     return agg
 
