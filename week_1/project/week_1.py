@@ -50,24 +50,27 @@ def get_s3_data(context) -> List[Stock]:
     return output
 
 
+def get_max(first: Stock, second: Stock) -> Stock:
+    if first.high >= second.high:
+        return first
+    else:
+        return second
+
+
+def find_greatest_high_value(stocks: List[Stock], n: int) -> Stock:
+    if n == 1:
+        return stocks[0]
+
+    return get_max(stocks[n - 1], find_greatest_high_value(stocks, n - 1))
+
+
 @op(
     ins={"stocks": In(dagster_type=List[Stock])},
     out={"agg": Out(dagster_type=Aggregation)},
     description="Given a list of stocks, return the aggregation with the greatest high value",
 )
 def process_data(stocks: List[Stock]) -> Aggregation:
-    greatest_high_stock = Stock(
-        date=datetime.strptime("2018/10/15", "%Y/%m/%d"),
-        close=0.0,
-        volume=0,
-        open=0.0,
-        high=0.0,
-        low=0.0,
-    )
-    for each in stocks:
-        if each.high > greatest_high_stock.high:
-            greatest_high_stock = each
-
+    greatest_high_stock = find_greatest_high_value(stocks, len(stocks))
     agg = Aggregation(
         date=greatest_high_stock.date,
         high=greatest_high_stock.high,
