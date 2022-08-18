@@ -67,11 +67,14 @@ def get_s3_data(context):
     description="Given a list of stocks, return the aggregation with the greatest high value",  # noqa: E501
 )
 def process_data(context, stocks: List[Stock]):
-    nlargest = context.op_config["nlargest"]
+    n = context.op_config["nlargest"]
 
-    sorted_stocks = sorted(stocks, key=lambda x: x.high, reverse=True)
+    # sorted_stocks = sorted(stocks, key=lambda x: x.high, reverse=True)
+    nlargest_stocks = nlargest(n, stocks, key=lambda x: x.high)
+
     aggs = []
-    for stock in sorted_stocks[0:nlargest]:
+    # for stock in sorted_stocks[0:n]:
+    for stock in nlargest_stocks:
         aggs.append(
             Aggregation(
                 date=stock.date,
@@ -87,7 +90,7 @@ def process_data(context, stocks: List[Stock]):
     ins={"agg": In(dagster_type=Aggregation)},
     description="Upload an aggregation to Redis",
 )
-def put_redis_data(context, agg: Aggregation):
+def put_redis_data(context, agg: Aggregation) -> Nothing:
     context.log.debug(agg)
 
 
