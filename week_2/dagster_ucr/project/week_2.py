@@ -36,11 +36,12 @@ def process_data(stocks: List[Stock]) -> Aggregation:
     required_resource_keys={"redis"},
     ins={"aggregation": In(dagster_type=Aggregation)},
     description="Upload an aggregation to Redis",
+    tags={"kind": "redis"},
 )
 def put_redis_data(context, aggregation: Aggregation) -> Nothing:
     date = aggregation.date
     value = aggregation.high
-    context.resources.redis.put_data(date, value)
+    context.resources.redis.put_data(str(date), value)
 
 
 @graph
