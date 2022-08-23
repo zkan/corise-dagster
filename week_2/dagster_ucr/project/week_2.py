@@ -41,7 +41,7 @@ def process_data(stocks: List[Stock]) -> Aggregation:
 def put_redis_data(context, aggregation: Aggregation) -> Nothing:
     date = aggregation.date
     value = aggregation.high
-    context.resources.redis.put_data(str(date), value)
+    context.resources.redis.put_data(str(date), str(value))
 
 
 @graph
