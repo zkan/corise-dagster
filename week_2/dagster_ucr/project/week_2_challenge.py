@@ -2,7 +2,9 @@ from random import randint
 
 from dagster import In, Nothing, String, graph, op
 from dagster_dbt import dbt_cli_resource, dbt_run_op, dbt_test_op
+
 from dagster_ucr.resources import postgres_resource
+
 
 DBT_PROJECT_PATH = "/opt/dagster/dagster_home/dagster_ucr/dbt_test_project/."
 
@@ -39,7 +41,12 @@ def insert_dbt_data(context, table_name: String):
 
 @graph
 def dbt():
-    pass
+    table_name = create_dbt_table()
+    dbt_test_op(
+        dbt_run_op(
+            insert_dbt_data(table_name)
+        )
+    )
 
 
 docker = {
