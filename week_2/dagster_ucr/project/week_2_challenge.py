@@ -1,7 +1,12 @@
 from random import randint
 
 from dagster import In, Nothing, String, graph, op
-from dagster_dbt import dbt_cli_resource, dbt_run_op, dbt_test_op
+from dagster_dbt import (
+    DbtOutput,
+    dbt_cli_resource,
+    dbt_run_op,
+    dbt_test_op,
+)
 
 from dagster_ucr.resources import postgres_resource
 
@@ -39,14 +44,20 @@ def insert_dbt_data(context, table_name: String):
     context.log.info("Batch inserted")
 
 
+@op
+def success_dbt_op(context, dbt_output: DbtOutput):
+    context.log.info("Success!")
+
+
 @graph
 def dbt():
     table_name = create_dbt_table()
-    dbt_test_op(
+    dbt_output = dbt_test_op(
         dbt_run_op(
             insert_dbt_data(table_name)
         )
     )
+    success_dbt_op(dbt_output)
 
 
 docker = {
