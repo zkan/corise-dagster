@@ -44,8 +44,8 @@ def insert_dbt_data(context, table_name: String):
     context.log.info("Batch inserted")
 
 
-@op
-def success_dbt_op(context, dbt_output: DbtOutput):
+@op(ins={"start_after": In(Nothing)})
+def success_dbt_op(context):
     context.log.info("Success!")
 
 
@@ -57,7 +57,7 @@ def dbt():
             insert_dbt_data(table_name)
         )
     )
-    success_dbt_op(dbt_output)
+    success_dbt_op(start_after=dbt_output)
 
 
 docker = {
