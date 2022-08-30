@@ -69,8 +69,7 @@ local = {
     "ops": {"get_s3_data": {"config": {"s3_key": "prefix/stock_9.csv"}}},
 }
 
-
-docker = {
+docker_resource_config = {
     "resources": {
         "s3": {
             "config": {
@@ -87,6 +86,9 @@ docker = {
             }
         },
     },
+}
+docker = {
+    **docker_resource_config,
     "ops": {"get_s3_data": {"config": {"s3_key": "prefix/stock_9.csv"}}},
 }
 
@@ -94,22 +96,7 @@ docker = {
 @static_partitioned_config(partition_keys=["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"])
 def docker_config(partition_key: str):
     return {
-        "resources": {
-            "s3": {
-                "config": {
-                    "bucket": "dagster",
-                    "access_key": "test",
-                    "secret_key": "test",
-                    "endpoint_url": "http://host.docker.internal:4566",
-                }
-            },
-            "redis": {
-                "config": {
-                    "host": "redis",
-                    "port": 6379,
-                }
-            },
-        },
+        **docker_resource_config,
         "ops": {"get_s3_data": {"config": {"s3_key": f"prefix/stock_{partition_key}.csv"}}},
     }
 
@@ -154,22 +141,7 @@ def docker_week_3_sensor(context):
         yield RunRequest(
             run_key=new_key,
             run_config={
-                "resources": {
-                    "s3": {
-                        "config": {
-                            "bucket": "dagster",
-                            "access_key": "test",
-                            "secret_key": "test",
-                            "endpoint_url": "http://host.docker.internal:4566",
-                        }
-                    },
-                    "redis": {
-                        "config": {
-                            "host": "redis",
-                            "port": 6379,
-                        }
-                    },
-                },
+                **docker_resource_config,
                 "ops": {"get_s3_data": {"config": {"s3_key": new_key}}},
             },
         )
