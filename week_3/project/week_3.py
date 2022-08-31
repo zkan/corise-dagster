@@ -95,7 +95,7 @@ docker = {
 # docker = docker_resource_config | {"ops": {"get_s3_data": {"config": {"s3_key": "prefix/stock_9.csv"}}}}
 
 
-PARTITIONS= ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]
+PARTITIONS = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]
 
 
 @static_partitioned_config(partition_keys=PARTITIONS)
