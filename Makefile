@@ -37,11 +37,11 @@ week_2_restart_workspace:
 # Week 3
 .PHONY: week_3_start
 week_3_start:
-	@docker compose --env-file=week_3/.course_week --profile dagster --profile week_3_4 up -d --build
+	@docker compose -f docker-compose-week-3.yml --env-file=week_3/.course_week --profile dagster --profile week_3_4 up -d --build
 
 .PHONY: week_3_down
 week_3_down:
-	@docker compose --env-file=week_3/.course_week --profile dagster --profile week_3_4 down --remove-orphans
+	@docker compose -f docker-compose-week-3.yml --env-file=week_3/.course_week --profile dagster --profile week_3_4 down --remove-orphans
 
 .PHONY: week_3_restart_workspace_content
 week_3_restart_workspace_content:
