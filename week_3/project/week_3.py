@@ -7,6 +7,7 @@ from dagster import (
     ResourceDefinition,
     RetryPolicy,
     RunRequest,
+    schedule,
     ScheduleDefinition,
     SkipReason,
     graph,
@@ -94,7 +95,10 @@ docker = {
 # docker = docker_resource_config | {"ops": {"get_s3_data": {"config": {"s3_key": "prefix/stock_9.csv"}}}}
 
 
-@static_partitioned_config(partition_keys=["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"])
+PARTITIONS= ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]
+
+
+@static_partitioned_config(partition_keys=PARTITIONS)
 def docker_config(partition_key: str):
     return {
         **docker_resource_config,
@@ -125,9 +129,14 @@ docker_week_3_pipeline = week_3_pipeline.to_job(
 )
 
 
-local_week_3_schedule = ScheduleDefinition(job=local_week_3_pipeline, cron_schedule="*/15 * * * *")
+local_week_3_schedule = ScheduleDefinition(job=local_week_3_pipeline, cron_schedule="*/15 * * * *", run_config=local)
 
-docker_week_3_schedule = ScheduleDefinition(job=docker_week_3_pipeline, cron_schedule="0 * * * *")
+
+@schedule(job=docker_week_3_pipeline, cron_schedule="0 * * * *")
+def docker_week_3_schedule():
+    for p in PARTITIONS:
+        request = docker_week_3_pipeline.run_request_for_partition(partition_key=p, run_key=p)
+        yield request
 
 
 @sensor(job=docker_week_3_pipeline, minimum_interval_seconds=30)
