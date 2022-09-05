@@ -33,6 +33,6 @@ def get_s3_keys(bucket: str, prefix: str = "", endpoint_url: str = None, since_k
 
     for idx, key in enumerate(sorted_keys):
         if key == since_key:
-            return sorted_keys[idx + 1 :]
+            return sorted_keys[idx + 1 :]  # noqa
 
     return []
