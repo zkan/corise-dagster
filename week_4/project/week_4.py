@@ -1,9 +1,6 @@
-from typing import List
-
 from dagster import (
     asset,
     AssetIn,
-    Nothing,
     with_resources,
 )
 from project.resources import redis_resource, s3_resource
