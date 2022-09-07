@@ -1,6 +1,11 @@
 from typing import List
 
-from dagster import Nothing, asset, with_resources
+from dagster import (
+    asset,
+    AssetIn,
+    Nothing,
+    with_resources,
+)
 from project.resources import redis_resource, s3_resource
 from project.types import Aggregation, Stock
 
@@ -23,6 +28,7 @@ def get_s3_data(context):
 
 
 @asset(
+    ins={"get_s3_data": AssetIn("get_s3_data")},
     description="Given a list of stocks, return the aggregation with the greatest high value",  # noqa: E501
     group_name="corise",
     compute_kind="python",
@@ -33,6 +39,7 @@ def process_data(get_s3_data):
 
 
 @asset(
+    ins={"process_data": AssetIn("process_data")},
     required_resource_keys={"redis"},
     description="Upload an aggregation to Redis",
     group_name="corise",
